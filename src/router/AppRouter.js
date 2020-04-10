@@ -2,14 +2,19 @@ import React,{Component} from "react"
 import { Route,BrowserRouter } from "react-router-dom"
 import App from "../container/App.js"
 import SubRouter from "./SubRouter"
+import Auth from "../container/Auth.js"
+import AuthRouter from "./AuthRouter"
 
 export default class AppRouter extends Component{
   render(){
     return(
       <BrowserRouter>
-        <App>
+        {/**<App>
           <Route path="/" component={SubRouter}></Route>
-        </App>
+        </App>**/}
+        <Auth>
+          <Route path="/" component={AuthRouter}></Route>
+        </Auth>
       </BrowserRouter>
     )
   }

@@ -10,7 +10,6 @@ export function httpPost(url,data){ // data = {}
    var result = fetch(url,{
      method:"post",
      headers: {
-
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/x-www-form-urlencoded'
      },

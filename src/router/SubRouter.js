@@ -3,7 +3,6 @@ import {Route,Switch} from "react-router-dom"
 import City from "../container/City"
 import Detail from "../container/Detail"
 import Home from "../container/Home"
-import Login from "../container/Login"
 import NotFound from "../container/404"
 import CityRouter from "./CityRouter"
 import Ques from "../container/Ques"
@@ -21,7 +20,6 @@ export default class SubRouter extends Component{
           <Route path="/" component={CityRouter}></Route>
         </City>
         <Route exact path="/kaka/detial/:id" component={Detail}></Route>
-        <Route  path="/edit" component={Login}></Route>
         <Route  component={NotFound}></Route>
       </Switch>
     )

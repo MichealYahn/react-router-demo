@@ -1,6 +1,5 @@
 import React,{ Component } from "react";
 import { Descriptions, Badge ,Button,Row, Col} from 'antd';
-import { Link } from "react-router-dom"
 import { createBrowserHistory } from 'history';
 
 const history = createBrowserHistory();

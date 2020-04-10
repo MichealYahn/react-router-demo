@@ -1,28 +1,8 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Button ,DatePicker,TreeSelect} from 'antd';
-
+import { httpPost } from "../../http"
 const { RangePicker } = DatePicker;
 
-const treeData = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    children: [
-      {
-        title: 'Child Node1',
-        value: '0-0-1',
-      },
-      {
-        title: 'Child Node2',
-        value: '0-0-2',
-      },
-    ],
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-  },
-];
 const rangeConfig = {
   rules: [{ type: 'array', required: false, message: 'Please select time!' }],
 };
@@ -35,9 +15,30 @@ const onFinish = values => {
 export class AdvancedSearchForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {value:''};
+    this.state = {
+      value:'',
+      treeData:[{
+        title: '',
+        value: '',
+        children:[]
+      }]
+    };
   }
   componentDidMount() {
+    httpPost("/api/dept/list",{
+      reqCheckSum:'1000000000000000',
+      name:'nihao'
+    })
+    .then(res => {
+      console.log(res);
+      return res.json();
+    })
+    .then(data => {
+      console.log(data);
+      this.setState({
+        treeData:data.result
+      })
+    })
   }
 
   onChange = value => {
@@ -62,11 +63,10 @@ export class AdvancedSearchForm extends Component {
             <Form.Item name="deptId" label="部门" >
               <TreeSelect
                 style={{ width: '60%' }}
-                value={this.state.value}
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                treeData={treeData}
-                placeholder="Please select"
-                treeDefaultExpandAll
+                treeData={this.state.treeData}
+                placeholder="选择部门"
+                treeDefaultExpandAll={false}
                 onChange={this.onChange}
               />
             </Form.Item>
@@ -92,7 +92,7 @@ export class AdvancedSearchForm extends Component {
 
 };
 
-export default class Loign extends Component{
+export default class Search extends Component{
   render(){
     return(<div></div>)
   }
