@@ -1,20 +1,20 @@
 import React,{Component} from "react"
-import { Route,BrowserRouter } from "react-router-dom"
+import { Route,BrowserRouter,Switch } from "react-router-dom"
 import App from "../container/App.js"
 import SubRouter from "./SubRouter"
-import Auth from "../container/Auth.js"
-import AuthRouter from "./AuthRouter"
+import Login from "../container/Login"
+import PrivateRoute from "./PrivateRoute"
 
 export default class AppRouter extends Component{
   render(){
     return(
       <BrowserRouter>
-        {/**<App>
-          <Route path="/" component={SubRouter}></Route>
-        </App>**/}
-        <Auth>
-          <Route path="/" component={AuthRouter}></Route>
-        </Auth>
+        <Switch>
+          <Route exact path="/login" component={Login}></Route>
+          <App>
+            <Route path="/" component={SubRouter}></Route>
+          </App>
+        </Switch>
       </BrowserRouter>
     )
   }

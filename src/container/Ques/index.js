@@ -1,6 +1,6 @@
 import React,{ Component } from "react";
 import { Table } from 'antd';
-import { Link } from "react-router-dom"
+import { Link,withRouter } from "react-router-dom"
 import { httpPost } from "../../http"
 import { AdvancedSearchForm } from '../Search'
 
@@ -25,7 +25,7 @@ const columns = [
 ];
 
 
-export default class Ques extends Component{
+class Ques extends Component{
   constructor(){
     super()
     this.state={
@@ -135,3 +135,4 @@ export default class Ques extends Component{
       )
     }
 }
+export default withRouter(Ques);

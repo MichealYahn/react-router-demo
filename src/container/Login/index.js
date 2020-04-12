@@ -2,13 +2,12 @@ import React,{Component} from "react"
 import { Form, Input, Button, Checkbox } from 'antd';
 import { withRouter} from 'react-router-dom'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { createBrowserHistory } from 'history';
-const history = createBrowserHistory();
 
 class Login extends Component{
 
   onFinish = values => {
-    history.replace('/ques');
+    window.sessionStorage.setItem("userId","1525")
+    this.props.history.replace('/ques');
     console.log('Received values of form: ', values);
 
   };

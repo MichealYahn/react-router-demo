@@ -7,20 +7,21 @@ import NotFound from "../container/404"
 import CityRouter from "./CityRouter"
 import Ques from "../container/Ques"
 import QuesDetail from "../container/Ques/detail"
+import PrivateRoute from "./PrivateRoute"
 
 export default class SubRouter extends Component{
   render(){
     return(
       <Switch>
         { /* exact:精准匹配路径 */ }
-        <Route exact path="/" component={Home}></Route>
-        <Route exact path="/ques" component={Ques}></Route>
-        <Route path="/ques/detail/:id" component={QuesDetail}></Route>
+        <PrivateRoute exact path="/" component={Home}></PrivateRoute>
+        <PrivateRoute exact path="/ques" component={Ques}></PrivateRoute>
+        <PrivateRoute path="/ques/detail/:id" component={QuesDetail}></PrivateRoute>
         <City path="/city">
-          <Route path="/" component={CityRouter}></Route>
+          <PrivateRoute path="/" component={CityRouter}></PrivateRoute>
         </City>
-        <Route exact path="/kaka/detial/:id" component={Detail}></Route>
-        <Route  component={NotFound}></Route>
+        <PrivateRoute exact path="/kaka/detial/:id" component={Detail}></PrivateRoute>
+        <PrivateRoute  component={NotFound}></PrivateRoute>
       </Switch>
     )
   }
