@@ -1,7 +1,7 @@
 import React,{Component} from "react"
 import { Link } from "react-router-dom"
-import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined,LogoutOutlined,FormOutlined  } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal,Form,Input,Button} from 'antd';
+import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined,LogoutOutlined,FormOutlined ,LockOutlined } from '@ant-design/icons';
 import { createBrowserHistory } from 'history';
 
 
@@ -9,20 +9,6 @@ const history = createBrowserHistory();
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
-let menu = (
-  <Menu>
-    <Menu.Item>
-      <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-        <FormOutlined />  修改密码
-      </a>
-    </Menu.Item>
-    <Menu.Item>
-      <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-        <LogoutOutlined />  退出登录
-      </a>
-    </Menu.Item>
-  </Menu>
-);
 
 export default class App extends Component{
 
@@ -114,7 +100,9 @@ export default class App extends Component{
                       </a>
                     </Menu.Item>
                     <Menu.Item>
-                      <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+                      <a target="_blank" rel="noopener noreferrer" onClick={()=>{
+                        window.sessionStorage.removeItem('token');
+                      }}>
                         <LogoutOutlined />  退出登录
                       </a>
                     </Menu.Item>
@@ -131,8 +119,57 @@ export default class App extends Component{
                 visible={this.state.showPass}
                 onOk={this.handleOk}
                 onCancel={this.handleCancel}
+                okText="确认"
+                cancelText="取消"
               >
-                <p>你好的啊</p>
+                <Form
+                  name="normal_login"
+                  className="login-form"
+                  onFinish={this.onFinish}
+                >
+                  <Form.Item
+                    name="password"
+                    rules={[{ required: true, message: '请填写原密码!' }]}
+                  >
+                    <Input prefix={<UserOutlined className="site-form-item-icon" />} type="password" placeholder="原密码" />
+                  </Form.Item>
+                  <Form.Item
+                    name="password"
+                    rules={[{ required: true, message: '请填写新密码!' }]}
+                  >
+                    <Input
+                      prefix={<LockOutlined className="site-form-item-icon" />}
+                      type="password"
+                      placeholder="Password"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="password"
+                    rules={[{ required: true, message: '请再次填写新密码!' }]}
+                  >
+                    <Input
+                      prefix={<LockOutlined className="site-form-item-icon" />}
+                      type="password"
+                      placeholder="Password"
+                    />
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit" className="login-form-button">
+                      提交
+                    </Button>
+                    <Modal
+                      title="提示信息"
+                      visible={this.state.showModal}
+                      onOk={this.handleOk}
+                      onCancel={this.handleCancel}
+                      okText="确认"
+                      cancelText="取消"
+                    >
+                      <p>{this.state.errMsg}</p>
+                    </Modal>
+                  </Form.Item>
+                </Form>
               </Modal>
             </Col>
           </Row>

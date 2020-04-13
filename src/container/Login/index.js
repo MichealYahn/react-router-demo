@@ -27,7 +27,7 @@ class Login extends Component{
       return res.json();
     })
     .then(data => {
-      if (data.code == 1) {
+      if (data.code === 1) {
         console.log(data.msg)
         window.sessionStorage.setItem("token",data.msg.token)
         this.props.history.replace('/');
@@ -65,13 +65,13 @@ class Login extends Component{
       >
         <Form.Item
           name="username"
-          rules={[{ required: true, message: 'Please input your Username!' }]}
+          rules={[{ required: true, message: '请填写用户名!' }]}
         >
           <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
+          rules={[{ required: true, message: '请填写密码!' }]}
         >
           <Input
             prefix={<LockOutlined className="site-form-item-icon" />}
@@ -81,11 +81,11 @@ class Login extends Component{
         </Form.Item>
         <Form.Item>
           <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
+            <Checkbox>记住我</Checkbox>
           </Form.Item>
 
           <a className="login-form-forgot" href="">
-            Forgot password
+            忘记密码
           </a>
         </Form.Item>
 
@@ -93,17 +93,19 @@ class Login extends Component{
 
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
+            登录
           </Button>
           <Modal
             title="提示信息"
             visible={this.state.showModal}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
+            okText="确认"
+            cancelText="取消"
           >
             <p>{this.state.errMsg}</p>
           </Modal>
-          Or <a href="">register now!</a>
+          Or <a href="">现在去注册</a>
         </Form.Item>
       </Form>
     )

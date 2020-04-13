@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import {Route,Switch} from "react-router-dom"
+import {Switch} from "react-router-dom"
 import City from "../container/City"
 import Detail from "../container/Detail"
 import Home from "../container/Home"

@@ -3,7 +3,6 @@ import { Route,BrowserRouter,Switch } from "react-router-dom"
 import App from "../container/App.js"
 import SubRouter from "./SubRouter"
 import Login from "../container/Login"
-import PrivateRoute from "./PrivateRoute"
 
 export default class AppRouter extends Component{
   render(){
