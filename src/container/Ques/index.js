@@ -47,6 +47,7 @@ class Ques extends Component{
       return res.json();
     })
     .then(data => {
+      console.log(data);
       let datas = [];
       for (var i in data.result.list) {
 

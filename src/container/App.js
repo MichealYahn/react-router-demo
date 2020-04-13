@@ -1,7 +1,7 @@
 import React,{Component} from "react"
 import { Link } from "react-router-dom"
-import { Layout, Menu, Breadcrumb,Dropdown,Row,Col } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined  } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal } from 'antd';
+import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined,LogoutOutlined,FormOutlined  } from '@ant-design/icons';
 import { createBrowserHistory } from 'history';
 
 
@@ -13,12 +13,12 @@ let menu = (
   <Menu>
     <Menu.Item>
       <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-        1st menu item
+        <FormOutlined />  修改密码
       </a>
     </Menu.Item>
     <Menu.Item>
       <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-        2nd menu item
+        <LogoutOutlined />  退出登录
       </a>
     </Menu.Item>
   </Menu>
@@ -27,10 +27,11 @@ let menu = (
 export default class App extends Component{
 
   constructor(props){
-    super()
+    super(props)
     this.state={
       selectedKey:'1',
-      openKey:'sub1'
+      openKey:'sub1',
+      showPass:false
     }
   }
 
@@ -65,6 +66,26 @@ export default class App extends Component{
     });
   }
 
+  showPass = ()=>{
+    this.setState({
+      showPass: true,
+    });
+  }
+
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      showPass: false,
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      showPass: false,
+    });
+  };
+
   render(){
     return(
       <Layout>
@@ -84,11 +105,35 @@ export default class App extends Component{
               </Menu>
             </Col>
             <Col span="2">
-              <Dropdown overlay={menu}>
+              <Dropdown overlay={()=>{
+                return(
+                  <Menu>
+                    <Menu.Item>
+                      <a target="_blank" rel="noopener noreferrer" onClick={this.showPass}>
+                        <FormOutlined />  修改密码
+                      </a>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+                        <LogoutOutlined />  退出登录
+                      </a>
+                    </Menu.Item>
+                  </Menu>
+                )
+
+              }}>
                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                   你好，皇上 <DownOutlined />
                 </a>
               </Dropdown>
+              <Modal
+                title="提示信息"
+                visible={this.state.showPass}
+                onOk={this.handleOk}
+                onCancel={this.handleCancel}
+              >
+                <p>你好的啊</p>
+              </Modal>
             </Col>
           </Row>
 
