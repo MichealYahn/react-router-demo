@@ -7,15 +7,20 @@ export function httpGet(url){
 
 // post
 export function httpPost(url,data){ // data = {}
-   var result = fetch(url,{
-     method:"post",
-     headers: {
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/x-www-form-urlencoded'
-     },
-     // body：sring name=iwen&age=20
-     body:params(data)
-   })
+    var result = Promise.race([
+      fetch(url,{
+        method:"post",
+        headers: {
+           'Accept': 'application/json, text/plain, */*',
+           'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        // body：sring name=iwen&age=20
+        body:params(data)
+      }),
+      new Promise(function(resolve,reject){
+          setTimeout(()=> reject(new Error('请求超时')),2000)
+      })
+    ])
    return result;
 }
 

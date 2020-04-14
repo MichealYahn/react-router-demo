@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Form, Input, Button, Checkbox,Modal } from 'antd';
+import { Form, Input, Button, Checkbox,message } from 'antd';
 import { withRouter} from 'react-router-dom'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { httpPost,httpGet } from "../../http"
@@ -7,17 +7,12 @@ import { httpPost,httpGet } from "../../http"
 class Login extends Component{
   constructor(props){
     super(props)
-    this.state={
-      showModal:false,
-      errMsg:''
-    }
   }
   componentDidMount(){
     httpGet('');
   }
 
   onFinish = values => {
-    console.log('Received values of form: ', values.username);
     httpPost("/api/login/in",{
       username:values.username,
       password:values.password,
@@ -28,16 +23,14 @@ class Login extends Component{
     })
     .then(data => {
       if (data.code === 1) {
-        console.log(data.msg)
         window.sessionStorage.setItem("token",data.msg.token)
         this.props.history.replace('/');
       }else{
-        this.setState({
-          showModal:true,
-          errMsg:data.err
-        })
-        console.log(data.err);
+        message.warning(data.err);
       }
+    })
+    .catch((err)=>{
+      message.warning(err.message);
     })
   };
 
@@ -95,16 +88,6 @@ class Login extends Component{
           <Button type="primary" htmlType="submit" className="login-form-button">
             登录
           </Button>
-          <Modal
-            title="提示信息"
-            visible={this.state.showModal}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-            okText="确认"
-            cancelText="取消"
-          >
-            <p>{this.state.errMsg}</p>
-          </Modal>
           Or <a href="">现在去注册</a>
         </Form.Item>
       </Form>

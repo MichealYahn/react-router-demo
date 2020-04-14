@@ -1,7 +1,8 @@
 import React,{Component} from "react"
 import { Link } from "react-router-dom"
-import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal,Form,Input,Button} from 'antd';
+import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal,Form,Input,Button,message} from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined,LogoutOutlined,FormOutlined ,LockOutlined } from '@ant-design/icons';
+import { httpPost } from "../http"
 import { createBrowserHistory } from 'history';
 
 
@@ -21,6 +22,7 @@ export default class App extends Component{
     }
   }
 
+  formRef = React.createRef();
 
   updateMenu(pathname){
     let data = '';
@@ -59,10 +61,36 @@ export default class App extends Component{
   }
 
   handleOk = e => {
-    console.log(e);
-    this.setState({
-      showPass: false,
-    });
+    this.formRef.current
+      .validateFields()
+      .then(values => {
+        let params = this.formRef.current.getFieldsValue();
+        params['token']=window.sessionStorage.getItem('token');
+        console.log(params);
+        httpPost("/api/login/change/senha",params)
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if (data.code === 1) {
+            window.sessionStorage.setItem("token",data.msg.token)
+            this.props.history.replace('/');
+          }else{
+            message.warning(data.err);
+          }
+        })
+        .catch((err)=>{
+          message.warning(err.message);
+        })
+        this.setState({
+          showPass: false,
+        });
+        this.formRef.current.resetFields();
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+      });
+
   };
 
   handleCancel = e => {
@@ -123,6 +151,7 @@ export default class App extends Component{
                 cancelText="取消"
               >
                 <Form
+                  ref={this.formRef}
                   name="normal_login"
                   className="login-form"
                   onFinish={this.onFinish}
@@ -153,22 +182,16 @@ export default class App extends Component{
                       placeholder="Password"
                     />
                   </Form.Item>
-
-                  <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button">
-                      提交
-                    </Button>
-                    <Modal
-                      title="提示信息"
-                      visible={this.state.showModal}
-                      onOk={this.handleOk}
-                      onCancel={this.handleCancel}
-                      okText="确认"
-                      cancelText="取消"
-                    >
-                      <p>{this.state.errMsg}</p>
-                    </Modal>
-                  </Form.Item>
+                  <Modal
+                    title="提示信息"
+                    visible={this.state.showModal}
+                    onOk={this.handleOk}
+                    onCancel={this.handleCancel}
+                    okText="确认"
+                    cancelText="取消"
+                  >
+                    <p>{this.state.errMsg}</p>
+                  </Modal>
                 </Form>
               </Modal>
             </Col>
