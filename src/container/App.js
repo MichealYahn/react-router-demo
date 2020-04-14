@@ -115,7 +115,7 @@ export default class App extends Component{
                 </a>
               </Dropdown>
               <Modal
-                title="提示信息"
+                title="修改密码"
                 visible={this.state.showPass}
                 onOk={this.handleOk}
                 onCancel={this.handleCancel}
@@ -134,7 +134,7 @@ export default class App extends Component{
                     <Input prefix={<UserOutlined className="site-form-item-icon" />} type="password" placeholder="原密码" />
                   </Form.Item>
                   <Form.Item
-                    name="password"
+                    name="newPassword"
                     rules={[{ required: true, message: '请填写新密码!' }]}
                   >
                     <Input
@@ -144,7 +144,7 @@ export default class App extends Component{
                     />
                   </Form.Item>
                   <Form.Item
-                    name="password"
+                    name="newPassword2"
                     rules={[{ required: true, message: '请再次填写新密码!' }]}
                   >
                     <Input
