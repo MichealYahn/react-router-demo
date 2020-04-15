@@ -130,6 +130,7 @@ export default class App extends Component{
                     <Menu.Item>
                       <a target="_blank" rel="noopener noreferrer" onClick={()=>{
                         window.sessionStorage.removeItem('token');
+                        history.replace('/login');
                       }}>
                         <LogoutOutlined />  退出登录
                       </a>

@@ -25,10 +25,7 @@ export class AdvancedSearchForm extends Component {
     };
   }
   componentDidMount() {
-    httpPost("/api/dept/list",{
-      reqCheckSum:'1000000000000000',
-      name:'nihao'
-    })
+    httpPost("/api/dept/list",{})
     .then(res => {
       console.log(res);
       return res.json();
@@ -51,7 +48,7 @@ export class AdvancedSearchForm extends Component {
       <Form
         name="advanced_search"
         className="ant-advanced-search-form"
-        onFinish={onFinish}
+        onFinish={this.props.searchFinish}
       >
         <Row gutter={24}>
           <Col span={8} key={55}>

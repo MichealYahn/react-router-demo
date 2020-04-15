@@ -37,12 +37,8 @@ class Ques extends Component{
     this.handleCh = this.handleCh.bind(this);
   }
 
-
-  updatePage(pageno,pagesize){
-    httpPost("/api/list",{
-      pageno:pageno,
-      pagesize:pagesize
-    })
+  updatePage(params){
+    httpPost("/api/list",params)
     .then(res => {
       return res.json();
     })
@@ -67,7 +63,10 @@ class Ques extends Component{
   }
 
   componentDidMount(){
-    this.updatePage(this.state.pageno,this.state.pagesize);
+    var params = {};
+    params['pageno'] = this.state.pageno;
+    params['pagesize'] = this.state.pagesize;
+    this.updatePage(params);
   }
 
   handleCh(page){
@@ -75,7 +74,10 @@ class Ques extends Component{
       pageno:page.current,
       pagesize:page.pageSize
     })
-    this.updatePage(page.current,page.pageSize);
+    var params = {};
+    params['pageno'] = page.current;
+    params['pagesize'] = page.pageSize;
+    this.updatePage(params);
   }
 
   onFinish = values => {
@@ -86,7 +88,14 @@ class Ques extends Component{
     console.log('Failed:', errorInfo);
   };
 
-
+  searchFinish = values => {
+    console.log("**********");
+    console.log(values);
+    var params = values;
+    params['pageno'] = this.state.pageno;
+    params['pagesize'] = this.state.pagesize;
+    this.updatePage(params);
+  }
 
   render() {
 
@@ -130,7 +139,7 @@ class Ques extends Component{
       };
       return(
         <div>
-          <AdvancedSearchForm />
+          <AdvancedSearchForm searchFinish={this.searchFinish.bind(this)} />
           <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.quesList} onChange={this.handleCh} pagination={{ total:this.state.total, pageSize:"10"}}/>;
         </div>
       )

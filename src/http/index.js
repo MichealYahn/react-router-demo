@@ -21,6 +21,7 @@ export function httpPost(url,data){ // data = {}
           setTimeout(()=> reject(new Error('请求超时')),2000)
       })
     ])
+    
    return result;
 }
 
@@ -29,6 +30,10 @@ function params(obj){
   var item;
   for(item in obj){
     result += "&"+item+"="+encodeURIComponent(obj[item]);
+  }
+  var token = window.sessionStorage.getItem("token");
+  if(token){
+    result += "&token="+encodeURIComponent(token);
   }
   if(result){
     result = result.slice(1)
