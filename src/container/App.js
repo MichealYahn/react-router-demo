@@ -1,6 +1,6 @@
 import React,{Component} from "react"
 import { Link } from "react-router-dom"
-import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal,Form,Input,Button,message} from 'antd';
+import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal,Form,Input,message} from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined,LogoutOutlined,FormOutlined ,LockOutlined } from '@ant-design/icons';
 import { httpPost } from "../http"
 import { createBrowserHistory } from 'history';
@@ -67,7 +67,7 @@ export default class App extends Component{
         let params = this.formRef.current.getFieldsValue();
         params['token']=window.sessionStorage.getItem('token');
         console.log(params);
-        httpPost("/api/login/change/senha",params)
+        httpPost("/api/auth/change/senha",params)
         .then(res => {
           return res.json();
         })

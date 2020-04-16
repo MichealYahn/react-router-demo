@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button ,DatePicker,TreeSelect} from 'antd';
+import { Form, Row, Col, Button ,DatePicker,TreeSelect,Input} from 'antd';
 import { httpPost } from "../../http"
 const { RangePicker } = DatePicker;
 
 const rangeConfig = {
   rules: [{ type: 'array', required: false, message: 'Please select time!' }],
-};
-
-const onFinish = values => {
-  console.log('Received values of form: ', values);
 };
 
 
@@ -24,14 +20,13 @@ export class AdvancedSearchForm extends Component {
       }]
     };
   }
+  formRef = React.createRef();
   componentDidMount() {
     httpPost("/api/dept/list",{})
     .then(res => {
-      console.log(res);
       return res.json();
     })
     .then(data => {
-      console.log(data);
       this.setState({
         treeData:data.result
       })
@@ -39,13 +34,13 @@ export class AdvancedSearchForm extends Component {
   }
 
   onChange = value => {
-    console.log(value);
     this.setState({ value });
   };
 
   render(){
     return (
       <Form
+        ref={this.formRef}
         name="advanced_search"
         className="ant-advanced-search-form"
         onFinish={this.props.searchFinish}
@@ -53,7 +48,7 @@ export class AdvancedSearchForm extends Component {
         <Row gutter={24}>
           <Col span={8} key={55}>
             <Form.Item name="rangeTime" label="时间" {...rangeConfig}>
-              <RangePicker />
+              <RangePicker placeholder={['开始时间','结束时间']}/>
             </Form.Item>
           </Col>
           <Col span={8} key={54}>
@@ -68,18 +63,24 @@ export class AdvancedSearchForm extends Component {
               />
             </Form.Item>
           </Col>
+          <Col span={8} key={56}>
+            <Form.Item name="searchWord" label="名称">
+              <Input style={{ width: '60%' }} />
+            </Form.Item>
+          </Col>
         </Row>
         <Row>
           <Col span={24} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit">
-              Search
+              查询
             </Button>
             <Button
               style={{ margin: '0 8px' }}
               onClick={() => {
+                this.formRef.current.resetFields();
               }}
             >
-              Clear
+              重置
             </Button>
           </Col>
         </Row>

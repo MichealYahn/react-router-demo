@@ -2,18 +2,12 @@ import React,{Component} from "react"
 import { Form, Input, Button, Checkbox,message } from 'antd';
 import { withRouter} from 'react-router-dom'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { httpPost,httpGet } from "../../http"
+import { httpPost } from "../../http"
 
 class Login extends Component{
-  constructor(props){
-    super(props)
-  }
-  componentDidMount(){
-    httpGet('');
-  }
 
   onFinish = values => {
-    httpPost("/api/login/in",{
+    httpPost("/api/auth/login",{
       username:values.username,
       password:values.password,
       imageCode:'1111'

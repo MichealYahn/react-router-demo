@@ -1,18 +1,32 @@
 import React, {Component} from 'react';
 import {Route, withRouter} from 'react-router-dom';
+import { httpPost } from "../http"
 
 class PrivateRoute extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAuthenticated: window.sessionStorage.getItem("token") ? true: false
+            isAuthenticated: false
         }
     }
 
     componentWillMount() {
-        if(!this.state.isAuthenticated){
-            this.props.history.replace("/login");
+      httpPost("/api/auth/check",{})
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        if(data.code === 1){
+          this.setState({
+            isAuthenticated:data.msg
+          })
+          if(!data.msg){
+              this.props.history.replace("/login");
+          }
         }
+
+      })
+
     }
 
     render() {
