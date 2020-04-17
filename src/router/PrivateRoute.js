@@ -24,7 +24,8 @@ class PrivateRoute extends Component {
               this.props.history.replace("/login");
           }
         }
-
+      }).catch((err) =>{
+        this.props.history.replace("/login");
       })
 
     }
