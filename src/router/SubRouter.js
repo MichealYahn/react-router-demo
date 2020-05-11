@@ -7,6 +7,7 @@ import NotFound from "../container/404"
 import CityRouter from "./CityRouter"
 import Ques from "../container/Ques"
 import QuesDetail from "../container/Ques/detail"
+import QuesEdit from "../container/Ques/edit"
 import PrivateRoute from "./PrivateRoute"
 
 export default class SubRouter extends Component{
@@ -16,6 +17,7 @@ export default class SubRouter extends Component{
         { /* exact:精准匹配路径 */ }
         <PrivateRoute exact path="/" component={Home}></PrivateRoute>
         <PrivateRoute exact path="/ques" component={Ques}></PrivateRoute>
+        <PrivateRoute path="/ques/edit/:id" component={QuesEdit}></PrivateRoute>
         <PrivateRoute path="/ques/detail/:id" component={QuesDetail}></PrivateRoute>
         <City path="/city">
           <PrivateRoute path="/" component={CityRouter}></PrivateRoute>

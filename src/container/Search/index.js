@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button ,DatePicker,TreeSelect,Input} from 'antd';
-import { httpPost } from "../../http"
-const { RangePicker } = DatePicker;
-
-const rangeConfig = {
-  rules: [{ type: 'array', required: false, message: 'Please select time!' }],
-};
-
+import { Form, Row, Col, Button ,DatePicker,TreeSelect,Input,Select} from 'antd';
+import { httpPost } from "../../http";
+import keywords from "./jsonData.json"
+const { Option } = Select;
 
 export class AdvancedSearchForm extends Component {
   constructor(props) {
@@ -26,9 +22,9 @@ export class AdvancedSearchForm extends Component {
     .then(res => {
       return res.json();
     })
-    .then(data => {
+    .then(result => {
       this.setState({
-        treeData:data.result
+        treeData:result.data
       })
     })
   }
@@ -46,15 +42,20 @@ export class AdvancedSearchForm extends Component {
         onFinish={this.props.searchFinish}
       >
         <Row gutter={24}>
-          <Col span={8} key={55}>
-            <Form.Item name="rangeTime" label="时间" {...rangeConfig}>
-              <RangePicker placeholder={['开始时间','结束时间']}/>
+          <Col span={4} key={53}>
+            <Form.Item name="sePreDate" label="开始时间" >
+              <DatePicker placeholder={['开始时间']} format="YYYY-MM-DD"/>
             </Form.Item>
           </Col>
-          <Col span={8} key={54}>
-            <Form.Item name="deptId" label="部门" >
+          <Col span={4} key={55}>
+            <Form.Item name="seEndDate" label="结束时间" >
+              <DatePicker placeholder={['结束时间']}/>
+            </Form.Item>
+          </Col>
+          <Col span={6} key={54}>
+            <Form.Item name="selDept" label="部门" >
               <TreeSelect
-                style={{ width: '60%' }}
+                style={{ width: '80%' }}
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                 treeData={this.state.treeData}
                 placeholder="选择部门"
@@ -63,9 +64,26 @@ export class AdvancedSearchForm extends Component {
               />
             </Form.Item>
           </Col>
-          <Col span={8} key={56}>
-            <Form.Item name="searchWord" label="名称">
+          <Col span={6} key={56}>
+            <Form.Item name="searchWord" label="关键词">
               <Input style={{ width: '60%' }} />
+            </Form.Item>
+          </Col>
+          <Col span={4} key={57}>
+            <Form.Item name="seKeyword" label="类型">
+              <Select 
+                placeholder="类型"
+                allowClear
+                style={{ width: '80%' }}
+              >
+              {
+                keywords.map(item => {
+                  return (
+                    <Option key={item.key} value={item.value}>{item.name}</Option>
+                  )
+                })
+              }
+              </Select>
             </Form.Item>
           </Col>
         </Row>

@@ -1,6 +1,6 @@
 // get
-export function httpGet(url){
-  var result = fetch(url);
+export function httpGet(url,data){
+  var result = fetch(url+"?"+params(data));
   return result;
 }
 
@@ -21,7 +21,7 @@ export function httpPost(url,data){ // data = {}
           setTimeout(()=> reject(new Error('请求超时')),2000)
       })
     ])
-    
+
    return result;
 }
 

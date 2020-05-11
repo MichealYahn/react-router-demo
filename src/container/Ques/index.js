@@ -1,7 +1,8 @@
 import React,{ Component } from "react";
+import moment from 'moment';
 import { Table } from 'antd';
 import { Link,withRouter } from "react-router-dom"
-import { httpPost } from "../../http"
+import { httpPost,httpGet } from "../../http"
 import { AdvancedSearchForm } from '../Search'
 
 const columns = [
@@ -12,7 +13,7 @@ const columns = [
   {
     title: '标题',
     dataIndex: 'title',
-    render: (text,record,index) => <Link to={record.detail}>{text}</Link>,
+    render: (text,record,index) => <Link to={'ques/detail/'+record.questionId}>{text}</Link>,
   },
   {
     title: '部门',
@@ -20,7 +21,18 @@ const columns = [
   },
   {
     title: '时间',
-    dataIndex: 'askTime',
+    dataIndex: 'regDate',
+  },
+  {
+    title: '操作',
+    render: (text,record,index) => {
+      return <>
+              <Link to={'ques/edit/'+record.questionId}>编辑 </Link>
+              <Link to={'ques/edit/'+record.questionId}>退回 </Link>
+              <Link to={'ques/edit/'+record.questionId}>延期 </Link>
+              <Link to={'ques/edit/'+record.questionId}>删除 </Link>
+             </>
+    },
   },
 ];
 
@@ -30,66 +42,68 @@ class Ques extends Component{
     super()
     this.state={
       quesList:[],
-      pageno:1,
-      pagesize:10,
+      pageNo:1,
+      pageSize:10,
       total:0
     }
     this.handleCh = this.handleCh.bind(this);
   }
 
   updatePage(params){
-    httpPost("/api/list",params)
+    httpGet("/api/ques/show/waudit",params)
     .then(res => {
       return res.json();
     })
     .then(data => {
       let datas = [];
-      for (var i in data.result.list) {
-
+      for (var i in data.data.list) {
         datas.push({
-          detail:'ques/detail/'+data.result.list[i].quesId,
-          key:data.result.list[i].quesId,
-          title:data.result.list[i].title,
-          deptName:data.result.list[i].deptName,
-          askTime:data.result.list[i].askTime
+          questionId:data.data.list[i].questionId,
+          key:data.data.list[i].questionId,
+          title:data.data.list[i].title,
+          deptName:data.data.list[i].deptName,
+          regDate:moment(data.data.list[i].regDate).format("YYYY-MM-DD HH:mm:ss")
         })
       }
       this.setState({
         quesList:datas,
-        total:data.result.total
+        total:data.data.total
       })
     })
   }
 
   componentDidMount(){
     var params = {};
-    params['pageno'] = this.state.pageno;
-    params['pagesize'] = this.state.pagesize;
+    params['pageNo'] = this.state.pageNo;
+    params['pageSize'] = this.state.pageSize;
     this.updatePage(params);
   }
 
   handleCh(page){
     this.setState({
-      pageno:page.current,
-      pagesize:page.pageSize
+      pageNo:page.current,
+      pageSize:page.pageSize
     })
     var params = {};
-    params['pageno'] = page.current;
-    params['pagesize'] = page.pageSize;
+    params['pageNo'] = page.current;
+    params['pageSize'] = page.pageSize;
     this.updatePage(params);
   }
 
   searchFinish = values => {
     var params = {};
-    for(var i in values){
-      if(values[i] !== null && values[i] !== '' && values[i] !== 'undefined'){
-        params[i] = values[i]
+    for(var v in values){
+      if(typeof(values[v]) != 'undefined'){
+        if(v.indexOf('Date')>-1){
+          params[v] = values[v].format('YYYY-MM-DD');
+        }else{
+          params[v] = values[v]
+        }
       }
-    }
 
-    params['pageno'] = 1;
-    params['pagesize'] = this.state.pagesize;
-    console.log(params);
+    }
+    params['pageNo'] = 1;
+    params['pageSize'] = this.state.pageSize;
     this.updatePage(params);
   }
 
@@ -136,7 +150,10 @@ class Ques extends Component{
       return(
         <div>
           <AdvancedSearchForm searchFinish={this.searchFinish.bind(this)} />
-          <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.quesList} onChange={this.handleCh} pagination={{ total:this.state.total, pageSize:"10"}}/>;
+          <Table rowSelection={rowSelection} columns={columns}
+            dataSource={this.state.quesList}
+            onChange={this.handleCh}
+            pagination={{ total:this.state.total, pageSize:"10"}}/>
         </div>
       )
     }

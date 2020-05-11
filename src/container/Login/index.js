@@ -17,10 +17,10 @@ class Login extends Component{
     })
     .then(data => {
       if (data.code === 1) {
-        window.sessionStorage.setItem("token",data.msg.token)
+        window.sessionStorage.setItem("token",data.data.token)
         this.props.history.replace('/');
       }else{
-        message.warning(data.err);
+        message.warning(data.error);
       }
     })
     .catch((err)=>{

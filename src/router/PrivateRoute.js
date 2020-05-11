@@ -18,9 +18,9 @@ class PrivateRoute extends Component {
       .then(data => {
         if(data.code === 1){
           this.setState({
-            isAuthenticated:data.msg
+            isAuthenticated:data.data
           })
-          if(!data.msg){
+          if(!data.data){
               this.props.history.replace("/login");
           }
         }

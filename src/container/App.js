@@ -260,7 +260,7 @@ export default class App extends Component{
               </SubMenu>
             </Menu>
           </Sider>
-          <Layout style={{ padding: '0 24px 24px' }}>
+          <Layout style={{ padding: '0 24px 24px',backgroundColor:'#9c9c9c' }}>
             <Breadcrumb style={{ margin: '16px 0' }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
               <Breadcrumb.Item>List</Breadcrumb.Item>
@@ -272,6 +272,7 @@ export default class App extends Component{
                 padding: 24,
                 margin: 0,
                 minHeight: 280,
+                backgroundColor:'#6c6c6c'
               }}
             >
             {this.props.children}
