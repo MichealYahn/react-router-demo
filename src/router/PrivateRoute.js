@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import cookie from 'react-cookies'
 import {Route, withRouter} from 'react-router-dom';
 import { httpPost } from "../http"
 
@@ -11,22 +12,15 @@ class PrivateRoute extends Component {
     }
 
     componentWillMount() {
-      httpPost("/api/auth/check",{})
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        if(data.code === 1){
-          this.setState({
-            isAuthenticated:data.data
-          })
-          if(!data.data){
-              this.props.history.replace("/login");
-          }
-        }
-      }).catch((err) =>{
+      var t = cookie.load('token')
+      if(t){
+        this.setState({
+          isAuthenticated:true
+        })
+      }else{
         this.props.history.replace("/login");
-      })
+      }
+
 
     }
 

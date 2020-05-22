@@ -1,24 +1,28 @@
 import React,{ Component } from "react";
 import moment from 'moment';
-import { Table, Divider, Space, Popconfirm, Button, UploadOutlined, message } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Table, Divider, Space, Popconfirm, Button, message } from 'antd';
 import { Link,withRouter } from "react-router-dom"
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { httpPost,httpGet } from "../../http"
 import Search from './search.js'
 
 const columns = [
   {
     title: 'ID',
-    dataIndex: 'key',
+    dataIndex: 'userId',
   },
   {
-    title: '标题',
-    dataIndex: 'title',
-    render: (text,record,index) => <Link to={'ques/detail/'+record.questionId}>{text}</Link>,
+    title: '用户名',
+    dataIndex: 'userName',
+    render: (text,record,index) => <Link to={'user/detail/'+record.userId}>{text}</Link>,
+  },
+  {
+    title: '姓名',
+    dataIndex: 'truename',
   },
   {
     title: '部门',
-    dataIndex: 'deptName',
+    dataIndex: 'deptId',
   },
   {
     title: '时间',
@@ -29,60 +33,19 @@ const columns = [
     title: '操作',
     render: (text,record,index) => {
       return <>
-              <Link to={'ques/edit/'+record.questionId}>编辑 </Link>
-              <Link to={'ques/edit/'+record.questionId}><span style={{color:"red"}}>申请退回 </span></Link>
-              <Link to={'ques/edit/'+record.questionId}><span style={{color:"red"}}>申请延期 </span></Link>
+              <Link to={'user/edit/'+record.userId}>编辑 </Link>
+              <Link to={'user/edit/'+record.userId}>退回 </Link>
+              <Link to={'user/edit/'+record.userId}>延期 </Link>
               <Popconfirm title="确认删除" okText="确认" cancelText="取消"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                onConfirm={(e)=>deleteQues(record.questionId)}>
+                onConfirm={(e)=>deleteUser(record.userId)}>
                 <a><span style={{color:"red"}}>删除</span></a>
               </Popconfirm>
-
              </>
     },
   },
 ];
-
-const deleteQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
-  .then(res => {
-    return res.json();
-  })
-  .then(data => {
-    if(data.code ===1){
-      window.location.reload()
-    }else{
-      message.warning(data.error);
-    }
-  })
-}
-const backQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
-  .then(res => {
-    return res.json();
-  })
-  .then(data => {
-    if(data.code ===1){
-      window.location.reload()
-    }else{
-      message.warning(data.error);
-    }
-  })
-}
-const applyUnOpenQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
-  .then(res => {
-    return res.json();
-  })
-  .then(data => {
-    if(data.code ===1){
-      window.location.reload()
-    }else{
-      message.warning(data.error);
-    }
-  })
-}
-const applyDelayQues = (quesId)=>{
+const deleteUser = (quesId)=>{
   httpPost("/api/ques/delete/waudit",{quesIds:quesId})
   .then(res => {
     return res.json();
@@ -96,13 +59,13 @@ const applyDelayQues = (quesId)=>{
   })
 }
 
-class Ques extends Component{
+class User extends Component{
   constructor(){
     super()
     this.state={
       selectedRowKeys: [],
       loading: false,
-      quesList:[],
+      list:[],
       pageNo:1,
       pageSize:10,
       total:0
@@ -110,17 +73,17 @@ class Ques extends Component{
   }
 
   updatePage(params){
-    httpPost("/api/ques/show/waudit",params)
+    httpGet("/api/user/show",params)
     .then(res => {
       return res.json();
     })
     .then(data => {
       let datas = data.data.list
       for (var i in datas) {
-        datas[i].key = datas[i].questionId
+        datas[i].key = datas[i].userId
       }
       this.setState({
-        quesList:datas,
+        list:datas,
         total:data.data.total
       })
     })
@@ -161,20 +124,9 @@ class Ques extends Component{
     this.updatePage(params);
   }
 
-  start = () => {
-    this.setState({ loading: true });
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-  };
   onSelectChange = selectedRowKeys => {
     this.setState({ selectedRowKeys });
   };
-
   render() {
 
       const { selectedRowKeys, loading } = this.state;
@@ -234,35 +186,20 @@ class Ques extends Component{
           <Search searchFinish={this.searchFinish} />
           <Divider />
           <Space style={{ marginBottom: 16 }}>
-            <Popconfirm title="批量申请不公开" okText="确定" cancelText="取消" disabled={!hasSelected}
-              onConfirm={(e)=>applyUnOpenQues(this.state.selectedRowKeys)}>
-              <Button type="danger" loading={loading} >批量申请不公开</Button>
-            </Popconfirm>
-            <Popconfirm title="批量申请延期" okText="确定" cancelText="取消" disabled={!hasSelected}
-              onConfirm={(e)=>applyDelayQues(this.state.selectedRowKeys)}>
-              <Button type="danger" loading={loading} >批量申请延期</Button>
-            </Popconfirm>
-            <Popconfirm title="批量退回" okText="确定" cancelText="取消" disabled={!hasSelected}
-              onConfirm={(e)=>backQues(this.state.selectedRowKeys)}>
-              <Button type="danger" loading={loading} >批量退回</Button>
-            </Popconfirm>
+
+            <Button type="primary">新增用户</Button>
 
             <Popconfirm title="批量删除" okText="确定" cancelText="取消" disabled={!hasSelected}
-              onConfirm={(e)=>deleteQues(this.state.selectedRowKeys)}>
+              onConfirm={(e)=>deleteUser(this.state.selectedRowKeys)}>
               <Button type="danger" loading={loading} >批量删除</Button>
             </Popconfirm>
           </Space>
-
           <Table rowSelection={rowSelection} columns={columns}
-            dataSource={this.state.quesList}
+            dataSource={this.state.list}
             onChange={this.handleCh}
-            pagination={{
-              total:this.state.total,
-              pageSize:this.state.pageSize,
-              pageSizeOptions:["5","10","15","20"]
-            }}/>
+            pagination={{ total:this.state.total, pageSize:this.state.pageSize}}/>
         </div>
       )
     }
 }
-export default withRouter(Ques);
+export default withRouter(User);

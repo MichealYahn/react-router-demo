@@ -5,6 +5,8 @@ import { createBrowserHistory } from 'history';
 import {httpGet} from '../../http'
 import moment from 'moment';
 
+const history = createBrowserHistory();
+
 class QuesDetail extends Component{
   constructor(){
     super()
@@ -13,6 +15,7 @@ class QuesDetail extends Component{
       quesHisList:[],
       quesLogs:[]
     }
+    this.back = this.back.bind(this);
   }
 
   getQues(id){
@@ -34,6 +37,17 @@ class QuesDetail extends Component{
 
   componentDidMount(){
     this.getQues(this.props.match.params.id);
+  }
+
+  back(){
+    console.log("我看看这是啥："+history);
+    console.log(history);
+    history.listen((location)=>{
+      console.log("你能听到吗？");
+      console.log(location.pathname);
+    });
+    history.goBack();
+
   }
 
   render() {
@@ -92,7 +106,7 @@ class QuesDetail extends Component{
                   this.state.quesHisList.map((quesHis) => {
                     return <Timeline.Item key={quesHis.questionId}>
                               <Link to={'/ques/detail/'+quesHis.questionId}
-                                onClick={() => this.props.history.push('/ques/detail/'+quesHis.questionId)}>
+                                onClick={() => history.push('/ques/detail/'+quesHis.questionId)}>
                                {quesHis.title}--{quesHis.deptName}--{quesHis.stateStr}--
                                {moment(quesHis.regDate).format("YYYY-MM-DD HH:mm:ss")}
                               </Link>
@@ -102,7 +116,7 @@ class QuesDetail extends Component{
             </Descriptions.Item>
           </Descriptions>
         <Row justify="center">
-          <Col span={4}><Button type="dashed" onClick={()=>this.props.history.goBack()}>返回</Button></Col>
+          <Col span={4}><Button type="dashed" onClick={this.back}>返回</Button></Col>
         </Row>
         </>
       );

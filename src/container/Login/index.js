@@ -1,4 +1,5 @@
 import React,{Component} from "react"
+import cookie from 'react-cookies'
 import { Form, Input, Button, Checkbox,message } from 'antd';
 import { withRouter} from 'react-router-dom'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -17,14 +18,15 @@ class Login extends Component{
     })
     .then(data => {
       if (data.code === 1) {
-        window.sessionStorage.setItem("token",data.data.token)
+        cookie.save("token",data.data.token)
         this.props.history.replace('/');
       }else{
         message.warning(data.error);
       }
     })
     .catch((err)=>{
-      message.warning(err.message);
+      console.log(err);
+      message.warning("登录错误");
     })
   };
 

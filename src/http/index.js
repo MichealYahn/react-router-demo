@@ -1,3 +1,4 @@
+import cookie from 'react-cookies'
 // get
 export function httpGet(url,data){
   var result = fetch(url+"?"+params(data));
@@ -31,7 +32,7 @@ function params(obj){
   for(item in obj){
     result += "&"+item+"="+encodeURIComponent(obj[item]);
   }
-  var token = window.sessionStorage.getItem("token");
+  var token = cookie.load('token')
   if(token){
     result += "&token="+encodeURIComponent(token);
   }

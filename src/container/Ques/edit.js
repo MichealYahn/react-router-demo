@@ -1,9 +1,8 @@
 import React,{Component} from "react"
-import { Form, Input, Button, Select,Upload } from 'antd';
-import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
-import {httpGet} from '../../http'
+import { Form, Input, Button, Upload, Switch, Row,Col, message } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
+import { httpPost,httpGet } from "../../http"
 
-const { Option } = Select;
 const layout = {
   labelCol: {
     span: 8,
@@ -25,22 +24,19 @@ const normFile = e => {
   }
   return e && e.fileList;
 };
-export default class Edit extends React.Component {
+
+
+export default class Edit extends Component {
   constructor(){
     super()
     this.state={
       quesVo:{},
-      quesHisList:[],
-      quesLogs:[]
+      fileList: [],
+      uploading: false,
     }
+
   }
   formRef = React.createRef();
-
-  onGenderChange = value => {
-    this.formRef.current.setFieldsValue({
-      note: `Hi, ${value === 'male' ? 'man' : 'lady'}!`,
-    });
-  };
 
   componentDidMount(){
     this.getQues(this.props.match.params.id);
@@ -51,19 +47,70 @@ export default class Edit extends React.Component {
       return res.json();
     })
     .then(data => {
-      console.log(data);
+      data.data.vo.aa = true;
+      this.formRef.current.setFieldsValue({ques:data.data.vo})
+
       this.setState({
-        quesVo:data.data.vo,
-        quesHisList:data.data.quesHisList,
-        quesLogs:data.data.quesLogs
+        quesVo:data.data.vo
       })
     })
     .catch((err)=>{
       console.log(err);
     })
   }
+
+  handleUpload = () => {
+    const { fileList,quesVo } = this.state;
+    const formData = new FormData();
+    const token = window.sessionStorage.getItem("token");
+    formData.append('fileType',20);
+    formData.append('questionId',quesVo.questionId);
+    formData.append('token',token);
+    console.log("文件的个数"+fileList.length);
+    fileList.forEach(file => {
+      formData.append('files', file);
+    });
+    console.log(formData);
+    this.setState({
+      uploading: true,
+    });
+
+    fetch('/api/ques/uploadFile', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .catch(error => {
+      this.setState({
+        uploading: false,
+      });
+      message.error(error.error);
+    })
+    .then(result => {
+      this.setState({
+        fileList: [],
+        uploading: false,
+      });
+      message.success(result.message);
+    });
+  };
+
   onFinish = values => {
+
+    values.ques.questionId = this.props.match.params.id;
     console.log(values);
+    httpPost('/api/ques/submit/wreply',values.ques)
+    .then(res => {
+      return res.json()
+    })
+    .then(result => {
+      console.log(result);
+    })
+    const { fileList } = this.state;
+    if(fileList.length > 0){
+      this.handleUpload();
+    }
+
   };
 
   onReset = () => {
@@ -71,90 +118,97 @@ export default class Edit extends React.Component {
   };
 
   onFill = () => {
+    const temp = this.formRef.current.getFieldsValue()
+    temp.lkDeptname = 'Hello world!';
     this.formRef.current.setFieldsValue({
-      note: 'Hello world!',
-      gender: 'male',
+      ques: temp,
     });
   };
 
-
   render() {
+
+    const { uploading, fileList } = this.state;
+    const props = {
+      onRemove: file => {
+        this.setState(state => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: file => {
+        this.setState(state => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    };
+
     return (
       <Form {...layout} ref={this.formRef} name="control-ref" onFinish={this.onFinish}>
-        <Form.Item label="办件编号">{this.state.quesVo.questionId}</Form.Item>
-        <Form.Item
-          name="note"
-          label="Note"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
+        <Form.Item label="办件编号">
+          <span className="ant-form-text" >{this.state.quesVo.questionId}</span>
         </Form.Item>
-        <Form.Item
-          name="gender"
-          label="Gender"
+        <Form.Item label="办件标题">
+          <span className="ant-form-text" >{this.state.quesVo.title}</span>
+        </Form.Item>
+        <Form.Item label="办件标签">
+          <span className="ant-form-text" >{this.state.quesVo.tag}</span>
+        </Form.Item>
+        <Form.Item label="办件内容">
+          <span className="ant-form-text" >{this.state.quesVo.content}</span>
+        </Form.Item>
+        <Form.Item label="办件内容">
+          <span className="ant-form-text" >{this.state.quesVo.truename}</span>
+        </Form.Item>
+        <Form.Item label="答复内容" name={['ques', 'answerContent']}
           rules={[
             {
               required: true,
+              message:"答复内容不能为空",
             },
           ]}
-        >
-          <Select
-            placeholder="Select a option and change input text above"
-            onChange={this.onGenderChange}
-            allowClear
           >
-            <Option value="male">male</Option>
-            <Option value="female">female</Option>
-            <Option value="other">other</Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, currentValues) => prevValues.gender !== currentValues.gender}
-        >
-          {({ getFieldValue }) =>
-            getFieldValue('gender') === 'other' ? (
-              <Form.Item
-                name="customizeGender"
-                label="Customize Gender"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            ) : null
-          }
-        </Form.Item>
-        <Form.Item name={['user', 'introduction']} label="答复内容">
           <Input.TextArea />
         </Form.Item>
-        <Form.Item label="Dragger">
-          <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-            <Upload.Dragger name="files" action="/upload.do">
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-            </Upload.Dragger>
-          </Form.Item>
+        <Form.Item label="落款" extra="可以自动生成默认落款">
+          <Row gutter={8}>
+            <Col span={6}>
+              <Form.Item name={['ques','lkDeptname']} noStyle colon={false}><Input placeholder="部门"/></Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name={['ques','lkDate']} noStyle colon={false}><Input placeholder="日期"/></Form.Item>
+            </Col>
+            <Col span={6}>
+              <Button htmlType="button" onClick={this.onFill}>
+               生成
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
-        <Form.Item {...tailLayout}>
+        <Form.Item label="答复附件">
+          <Upload.Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">点击或拖拽文件到这里</p>
+            <p className="ant-upload-hint">支持一个或多个上传</p>
+          </Upload.Dragger>
+        </Form.Item>
+        <Form.Item name={['ques', 'aa']} label="二次答复" valuePropName="checked"
+        >
+          <Switch/>
+        </Form.Item>
+        <Form.Item {...tailLayout} >
           <Button type="primary" htmlType="submit">
-            Submit
+            提交
           </Button>
           <Button htmlType="button" onClick={this.onReset}>
-            Reset
-          </Button>
-          <Button type="link" htmlType="button" onClick={this.onFill}>
-            Fill form
+            重置
           </Button>
         </Form.Item>
       </Form>

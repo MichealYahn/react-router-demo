@@ -1,23 +1,21 @@
 import React,{Component} from "react"
-import { Link } from "react-router-dom"
+import cookie from 'react-cookies'
+import { Link, withRouter } from "react-router-dom"
 import { Layout, Menu, Breadcrumb,Dropdown,Row,Col,Modal,Form,Input,message} from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined,DownOutlined,LogoutOutlined,FormOutlined ,LockOutlined } from '@ant-design/icons';
 import { httpPost } from "../http"
-import { createBrowserHistory } from 'history';
 
-
-const history = createBrowserHistory();
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 
-export default class App extends Component{
+class App extends Component{
 
   constructor(props){
     super(props)
     this.state={
-      selectedKey:'1',
-      openKey:'sub1',
+      selectedKey:'',
+      openKeys:[''],
       showPass:false
     }
   }
@@ -25,31 +23,33 @@ export default class App extends Component{
   formRef = React.createRef();
 
   updateMenu(pathname){
-    let data = '';
+    var subName = [''];
     switch (pathname) {
-      case "/":
-        data='1';
+      case '/home':
+      case '/ques':
+      case '/edit':
+      case '/city':
+        subName[0] = 'sub-content'
         break;
-      case "/ques":
-        data='2';
-        break;
-      case "/edit":
-        data='5';
+      case '/user':
+        subName[0] = 'sub-system'
         break;
       default:
-        data='1';
+        subName[0] = 'sub-content'
     }
+    console.log(subName);
     this.setState({
-      selectedKey:data
+      selectedKey:pathname,
+      openKeys:subName,
     })
   }
 
   componentDidMount(){
-    this.updateMenu(history.location.pathname);
+    this.updateMenu(this.props.history.location.pathname);
   }
 
   componentWillMount(){
-    history.listen((location)=>{
+    this.props.history.listen((location)=>{
       this.updateMenu(location.pathname);
     });
   }
@@ -65,7 +65,7 @@ export default class App extends Component{
       .validateFields()
       .then(values => {
         let params = this.formRef.current.getFieldsValue();
-        params['token']=window.sessionStorage.getItem('token');
+        params['token']=cookie.load('token');
         console.log(params);
         httpPost("/api/auth/change/senha",params)
         .then(res => {
@@ -73,7 +73,7 @@ export default class App extends Component{
         })
         .then(data => {
           if (data.code === 1) {
-            window.sessionStorage.setItem("token",data.msg.token)
+            cookie.save('token', data.msg.token, { path: '/' })
             this.props.history.replace('/');
           }else{
             message.warning(data.err);
@@ -129,8 +129,8 @@ export default class App extends Component{
                     </Menu.Item>
                     <Menu.Item>
                       <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                        window.sessionStorage.removeItem('token');
-                        history.replace('/login');
+                        cookie.remove("token");
+                        this.props.history.replace('/login');
                       }}>
                         <LogoutOutlined />  退出登录
                       </a>
@@ -155,7 +155,6 @@ export default class App extends Component{
                   ref={this.formRef}
                   name="normal_login"
                   className="login-form"
-                  onFinish={this.onFinish}
                 >
                   <Form.Item
                     name="password"
@@ -209,40 +208,39 @@ export default class App extends Component{
           }}>
             <Menu
               mode="inline"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
+              defaultSelectedKeys={this.state.selectedKey}
+              defaultOpenKeys={['sub-content']}
               selectedKeys={this.state.selectedKey}
+              openKeys={this.state.openKeys}
               style={{ height: '200%', borderRight: 3 }}
+              onOpenChange = {(item, key) => this.setState({openKeys:item})}
             >
               <SubMenu
-                key="sub1"
+                key="sub-content"
                 title={
                   <span>
                     <UserOutlined />
+                    内容管理
+                  </span>
+                }
+              >
+                <Menu.Item key="/home"><Link to="/home" onClick={() => this.props.history.push('/home')}>首页</Link></Menu.Item>
+                <Menu.Item key="/ques"><Link to="/ques" onClick={() => this.props.history.push('/ques')}>问题</Link></Menu.Item>
+                <Menu.Item key="/city"><Link to="/city" onClick={() => this.props.history.push('/city')}>城市</Link></Menu.Item>
+                <Menu.Item key="/kaka/detail/10001"><Link to="/kaka/detail/10001" onClick={() => this.props.history.push('/kaka/detail/10001')}>详情</Link></Menu.Item>
+                <Menu.Item key="/edit"><Link to="/edit" onClick={() => this.props.history.push('/edit')}>编辑</Link></Menu.Item>
+
+              </SubMenu>
+              <SubMenu
+                key="sub-system"
+                title={
+                  <span>
+                    <LaptopOutlined />
                     系统管理
                   </span>
                 }
               >
-                <Menu.Item key="1"><Link to="/" onClick={() => history.push('/')}>首页</Link></Menu.Item>
-                <Menu.Item key="2"><Link to="/ques" onClick={() => history.push('/ques')}>问题</Link></Menu.Item>
-                <Menu.Item key="3"><Link to="/city" onClick={() => history.push('/city')}>城市</Link></Menu.Item>
-                <Menu.Item key="4"><Link to="/kaka/detail/10001" onClick={() => history.push('/kaka/detail/10001')}>详情</Link></Menu.Item>
-                <Menu.Item key="5"><Link to="/edit" onClick={() => history.push('/edit')}>编辑</Link></Menu.Item>
-
-              </SubMenu>
-              <SubMenu
-                key="sub2"
-                title={
-                  <span>
-                    <LaptopOutlined />
-                    subnav 2
-                  </span>
-                }
-              >
-                <Menu.Item key="5">option5</Menu.Item>
-                <Menu.Item key="6">option6</Menu.Item>
-                <Menu.Item key="7">option7</Menu.Item>
-                <Menu.Item key="8">option8</Menu.Item>
+                <Menu.Item key="/user"><Link to="/user" onClick={() => this.props.history.push('/user')}>用户</Link></Menu.Item>
               </SubMenu>
               <SubMenu
                 key="sub3"
@@ -283,3 +281,4 @@ export default class App extends Component{
     )
   }
 }
+export default withRouter(App);

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Button ,DatePicker,TreeSelect,Input,Select} from 'antd';
 import { httpPost } from "../../http";
-import keywords from "./jsonData.json"
+import jsonData from "../../staticData/jsonData.json"
 const { Option } = Select;
 
-export class AdvancedSearchForm extends Component {
+export default class Search extends Component{
   constructor(props) {
     super(props);
     this.state = {
@@ -44,12 +44,12 @@ export class AdvancedSearchForm extends Component {
         <Row gutter={24}>
           <Col span={4} key={53}>
             <Form.Item name="sePreDate" label="开始时间" >
-              <DatePicker placeholder={['开始时间']} format="YYYY-MM-DD"/>
+              <DatePicker format="YYYY-MM-DD"/>
             </Form.Item>
           </Col>
           <Col span={4} key={55}>
             <Form.Item name="seEndDate" label="结束时间" >
-              <DatePicker placeholder={['结束时间']}/>
+              <DatePicker format="YYYY-MM-DD"/>
             </Form.Item>
           </Col>
           <Col span={6} key={54}>
@@ -71,13 +71,13 @@ export class AdvancedSearchForm extends Component {
           </Col>
           <Col span={4} key={57}>
             <Form.Item name="seKeyword" label="类型">
-              <Select 
+              <Select
                 placeholder="类型"
                 allowClear
                 style={{ width: '80%' }}
               >
               {
-                keywords.map(item => {
+                jsonData.keywords.map(item => {
                   return (
                     <Option key={item.key} value={item.value}>{item.name}</Option>
                   )
@@ -107,9 +107,3 @@ export class AdvancedSearchForm extends Component {
   }
 
 };
-
-export default class Search extends Component{
-  render(){
-    return(<div></div>)
-  }
-}

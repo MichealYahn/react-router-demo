@@ -6,6 +6,7 @@ import Home from "../container/Home"
 import NotFound from "../container/404"
 import CityRouter from "./CityRouter"
 import Ques from "../container/Ques"
+import User from "../container/User"
 import QuesDetail from "../container/Ques/detail"
 import QuesEdit from "../container/Ques/edit"
 import PrivateRoute from "./PrivateRoute"
@@ -23,6 +24,7 @@ export default class SubRouter extends Component{
           <PrivateRoute path="/" component={CityRouter}></PrivateRoute>
         </City>
         <PrivateRoute exact path="/kaka/detial/:id" component={Detail}></PrivateRoute>
+        <PrivateRoute exact path="/user" component={User}></PrivateRoute>
         <PrivateRoute  component={NotFound}></PrivateRoute>
       </Switch>
     )
