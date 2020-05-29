@@ -23,6 +23,7 @@ class App extends Component{
   formRef = React.createRef();
 
   updateMenu(pathname){
+    console.log(pathname);
     var subName = [''];
     switch (pathname) {
       case '/home':
@@ -37,7 +38,6 @@ class App extends Component{
       default:
         subName[0] = 'sub-content'
     }
-    console.log(subName);
     this.setState({
       selectedKey:pathname,
       openKeys:subName,
@@ -129,7 +129,7 @@ class App extends Component{
                     </Menu.Item>
                     <Menu.Item>
                       <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                        cookie.remove("token");
+                        window.localStorage.removeItem("token");
                         this.props.history.replace('/login');
                       }}>
                         <LogoutOutlined />  退出登录

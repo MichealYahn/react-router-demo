@@ -73,7 +73,7 @@ class User extends Component{
   }
 
   updatePage(params){
-    httpGet("/api/user/show",params)
+    httpGet("/gov_open/api/user/show",params)
     .then(res => {
       return res.json();
     })

@@ -8,7 +8,7 @@ import { httpPost } from "../../http"
 class Login extends Component{
 
   onFinish = values => {
-    httpPost("/api/auth/login",{
+    httpPost("/gov_open/api/auth/login",{
       username:values.username,
       password:values.password,
       imageCode:'1111'
@@ -18,7 +18,7 @@ class Login extends Component{
     })
     .then(data => {
       if (data.code === 1) {
-        cookie.save("token",data.data.token)
+        window.localStorage.setItem("token", data.data.token);
         this.props.history.replace('/');
       }else{
         message.warning(data.error);

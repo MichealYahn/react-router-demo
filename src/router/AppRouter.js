@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Route,BrowserRouter,Switch } from "react-router-dom"
+import { Route,HashRouter,Switch } from "react-router-dom"
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
 import App from "../container/App.js"
@@ -14,14 +14,14 @@ export default class AppRouter extends Component{
   render(){
     return(
       <ConfigProvider locale={zhCN}>
-        <BrowserRouter>
+        <HashRouter basename="/gov_open">
           <Switch>
             <Route exact path="/login" component={Login}></Route>
             <App>
               <Route path="/" component={SubRouter}></Route>
             </App>
           </Switch>
-        </BrowserRouter>
+        </HashRouter>
       </ConfigProvider>
     )
   }

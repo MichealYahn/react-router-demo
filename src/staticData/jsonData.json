@@ -9,6 +9,7 @@
   "roles":[
     {"name":"管理员","value":"管理员","key":1},
     {"name":"普通用户","value":"普通用户","key":2},
-    {"name":"VIP用户","value":"VIP用户","key":3}
+    {"name":"VIP用户","value":"VIP用户","key":3},
+    {"name":"游客","value":"游客","key":4}
   ]
 }

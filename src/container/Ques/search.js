@@ -18,7 +18,7 @@ export default class Search extends Component{
   }
   formRef = React.createRef();
   componentDidMount() {
-    httpPost("/api/dept/list",{})
+    httpPost("/gov_open/api/dept/list",{})
     .then(res => {
       return res.json();
     })

@@ -44,7 +44,7 @@ const columns = [
 ];
 
 const deleteQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
+  httpPost("/gov_open/api/ques/delete/waudit",{quesIds:quesId})
   .then(res => {
     return res.json();
   })
@@ -57,7 +57,7 @@ const deleteQues = (quesId)=>{
   })
 }
 const backQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
+  httpPost("/gov_open/api/ques/delete/waudit",{quesIds:quesId})
   .then(res => {
     return res.json();
   })
@@ -70,7 +70,7 @@ const backQues = (quesId)=>{
   })
 }
 const applyUnOpenQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
+  httpPost("/gov_open/api/ques/delete/waudit",{quesIds:quesId})
   .then(res => {
     return res.json();
   })
@@ -83,7 +83,7 @@ const applyUnOpenQues = (quesId)=>{
   })
 }
 const applyDelayQues = (quesId)=>{
-  httpPost("/api/ques/delete/waudit",{quesIds:quesId})
+  httpPost("/gov_open/api/ques/delete/waudit",{quesIds:quesId})
   .then(res => {
     return res.json();
   })
@@ -110,7 +110,7 @@ class Ques extends Component{
   }
 
   updatePage(params){
-    httpPost("/api/ques/show/waudit",params)
+    httpPost("/gov_open/api/ques/show/waudit",params)
     .then(res => {
       return res.json();
     })

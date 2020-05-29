@@ -1,21 +1,27 @@
-import cookie from 'react-cookies'
 // get
 export function httpGet(url,data){
-  var result = fetch(url+"?"+params(data));
+  var result = fetch(url+"?"+params(data),{
+    headers: {
+       'Accept': 'application/json, text/plain, */*',
+       'Content-Type': 'application/x-www-form-urlencoded',
+       'Authorization': window.localStorage.getItem('token')
+    }
+  });
   return result;
 }
 
 
 // post
-export function httpPost(url,data){ // data = {}
+export function httpPost(url,data){
     var result = Promise.race([
       fetch(url,{
         method:"post",
         headers: {
            'Accept': 'application/json, text/plain, */*',
-           'Content-Type': 'application/x-www-form-urlencoded'
+           'Content-Type': 'application/x-www-form-urlencoded',
+           'Authorization': window.localStorage.getItem('token')
         },
-        // body：sring name=iwen&age=20
+        credentials: 'include',
         body:params(data)
       }),
       new Promise(function(resolve,reject){
@@ -27,14 +33,10 @@ export function httpPost(url,data){ // data = {}
 }
 
 function params(obj){
-  var result = ""; // 接受最后的结果  {name:iwen,age:20}
+  var result = "";
   var item;
   for(item in obj){
     result += "&"+item+"="+encodeURIComponent(obj[item]);
-  }
-  var token = cookie.load('token')
-  if(token){
-    result += "&token="+encodeURIComponent(token);
   }
   if(result){
     result = result.slice(1)
